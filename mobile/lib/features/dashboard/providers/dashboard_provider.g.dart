@@ -6,18 +6,16 @@ part of 'dashboard_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$macroSummaryHash() => r'290344b806068d0a30398c240b4b977d9fb39b0c';
+String _$macroSummaryHash() => r'436911fdfb44aae440564cba50945653e2b7206d';
 
-/// Today's macro summary.
+/// Today's macro summary — fetched from GET /api/v1/macros/today.
 ///
-/// Currently returns mock data so the UI can be tested without a live backend.
-/// Replace the body of this provider with a real API call when backend is ready:
-///   final response = await ref.read(apiClientProvider).get('/api/v1/macros/today');
-///   return MacroSummary.fromJson(response.data);
+/// Falls back to mock data when the user has no active Supabase session
+/// (development / UI testing without auth).
 ///
 /// Copied from [macroSummary].
 @ProviderFor(macroSummary)
-final macroSummaryProvider = AutoDisposeProvider<MacroSummary>.internal(
+final macroSummaryProvider = AutoDisposeFutureProvider<MacroSummary>.internal(
   macroSummary,
   name: r'macroSummaryProvider',
   debugGetCreateSourceHash:
@@ -28,6 +26,6 @@ final macroSummaryProvider = AutoDisposeProvider<MacroSummary>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef MacroSummaryRef = AutoDisposeProviderRef<MacroSummary>;
+typedef MacroSummaryRef = AutoDisposeFutureProviderRef<MacroSummary>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,11 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Floating Action Button that opens the "What am I craving?" bottom sheet.
-///
-/// Tapping the FAB calls [showCravingSheet], which presents a text field and
-/// a Generate button. In this mock build the result card is hardcoded.
 class CravingFab extends StatelessWidget {
   const CravingFab({super.key});
 
@@ -29,26 +29,27 @@ class CravingFab extends StatelessWidget {
 /// Opens the craving bottom sheet modal.
 void showCravingSheet(BuildContext context) {
   showModalBottomSheet<void>(
-    context:       context,
+    context:            context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor:    Colors.transparent,
     builder: (_) => const _CravingSheet(),
   );
 }
 
 // ── Bottom sheet ──────────────────────────────────────────────────────────────
 
-class _CravingSheet extends StatefulWidget {
+class _CravingSheet extends ConsumerStatefulWidget {
   const _CravingSheet();
 
   @override
-  State<_CravingSheet> createState() => _CravingSheetState();
+  ConsumerState<_CravingSheet> createState() => _CravingSheetState();
 }
 
-class _CravingSheetState extends State<_CravingSheet> {
-  final _controller  = TextEditingController();
-  bool  _loading     = false;
-  bool  _showResult  = false;
+class _CravingSheetState extends ConsumerState<_CravingSheet> {
+  final _controller = TextEditingController();
+  bool          _loading    = false;
+  _GeneratedMeal? _meal;
+  String?       _error;
 
   @override
   void dispose() {
@@ -57,17 +58,36 @@ class _CravingSheetState extends State<_CravingSheet> {
   }
 
   Future<void> _generate() async {
-    if (_controller.text.trim().isEmpty) return;
-    setState(() => _loading = true);
-    // Simulate network delay — replace with real API call when backend ready.
-    await Future<void>.delayed(const Duration(milliseconds: 900));
-    if (mounted) setState(() { _loading = false; _showResult = true; });
+    final craving = _controller.text.trim();
+    if (craving.isEmpty) return;
+
+    setState(() { _loading = true; _error = null; _meal = null; });
+
+    try {
+      final dio = ref.read(apiClientProvider);
+      final response = await dio.post<Map<String, dynamic>>(
+        '/api/v1/meals/generate',
+        data: {'craving_input': craving},
+      );
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _meal    = _GeneratedMeal.fromJson(response.data!);
+        });
+      }
+    } on DioException catch (e) {
+      final detail = (e.response?.data as Map?)?['detail'] as String?
+          ?? 'Could not generate a recipe. Please try again.';
+      if (mounted) setState(() { _loading = false; _error = detail; });
+    } catch (_) {
+      if (mounted) setState(() { _loading = false; _error = 'Unexpected error. Please try again.'; });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme    = Theme.of(context);
-    final cs       = theme.colorScheme;
+    final theme      = Theme.of(context);
+    final cs         = theme.colorScheme;
     final viewInsets = MediaQuery.of(context).viewInsets;
 
     return Container(
@@ -107,14 +127,14 @@ class _CravingSheetState extends State<_CravingSheet> {
 
           // ── Text field ────────────────────────────────────────────────────
           TextField(
-            controller: _controller,
-            autofocus:  true,
+            controller:      _controller,
+            autofocus:       true,
             textInputAction: TextInputAction.done,
-            onSubmitted:    (_) => _generate(),
+            onSubmitted:     (_) => _generate(),
             decoration: InputDecoration(
-              hintText:      'e.g. something sweet and chocolatey',
-              filled:        true,
-              fillColor:     cs.surfaceContainer,
+              hintText: 'e.g. something sweet and chocolatey',
+              filled:   true,
+              fillColor: cs.surfaceContainer,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide:   BorderSide.none,
@@ -139,10 +159,7 @@ class _CravingSheetState extends State<_CravingSheet> {
               child: _loading
                   ? const SizedBox(
                       width: 22, height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.black,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.black),
                     )
                   : const Text(
                       'Generate Recipe',
@@ -151,10 +168,26 @@ class _CravingSheetState extends State<_CravingSheet> {
             ),
           ),
 
-          // ── Mock result card ──────────────────────────────────────────────
-          if (_showResult) ...[
+          // ── Error banner ──────────────────────────────────────────────────
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color:        AppColors.error.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _error!,
+                style: theme.textTheme.bodySmall?.copyWith(color: AppColors.error),
+              ),
+            ),
+          ],
+
+          // ── Result card ───────────────────────────────────────────────────
+          if (_meal != null) ...[
             const SizedBox(height: 16),
-            _RecipeResultCard(craving: _controller.text.trim()),
+            _RecipeResultCard(meal: _meal!),
           ],
 
           const SizedBox(height: 8),
@@ -164,12 +197,41 @@ class _CravingSheetState extends State<_CravingSheet> {
   }
 }
 
-// ── Mock recipe result ────────────────────────────────────────────────────────
+// ── Data model (API response subset) ─────────────────────────────────────────
+
+class _GeneratedMeal {
+  final String name;
+  final int    totalCalories;
+  final int    totalProteinG;
+  final int    totalCarbsG;
+  final int    totalFatG;
+  final String instructions;
+
+  const _GeneratedMeal({
+    required this.name,
+    required this.totalCalories,
+    required this.totalProteinG,
+    required this.totalCarbsG,
+    required this.totalFatG,
+    required this.instructions,
+  });
+
+  factory _GeneratedMeal.fromJson(Map<String, dynamic> json) => _GeneratedMeal(
+    name:          json['name'] as String,
+    totalCalories: json['total_calories'] as int,
+    totalProteinG: json['total_protein_g'] as int,
+    totalCarbsG:   json['total_carbs_g'] as int,
+    totalFatG:     json['total_fat_g'] as int,
+    instructions:  json['instructions'] as String,
+  );
+}
+
+// ── Recipe result card ────────────────────────────────────────────────────────
 
 class _RecipeResultCard extends StatelessWidget {
-  const _RecipeResultCard({required this.craving});
+  const _RecipeResultCard({required this.meal});
 
-  final String craving;
+  final _GeneratedMeal meal;
 
   @override
   Widget build(BuildContext context) {
@@ -208,30 +270,29 @@ class _RecipeResultCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'High-Protein Chocolate Mousse',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                  meal.name,
+                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                  maxLines:  2,
+                  overflow:  TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            'Greek yogurt + cocoa powder + honey + protein powder. '
-            'Ready in 5 min, no cooking.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.onSurfaceMuted,
-            ),
+            meal.instructions,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.onSurfaceMuted),
           ),
           const SizedBox(height: 10),
           Row(
             children: [
-              _MacroBadge('280 kcal', cs.onSurface),
+              _MacroBadge('${meal.totalCalories} kcal', cs.onSurface),
               const SizedBox(width: 8),
-              _MacroBadge('32g protein', AppColors.success),
+              _MacroBadge('${meal.totalProteinG}g protein', AppColors.success),
               const SizedBox(width: 8),
-              _MacroBadge('8g fat',     AppColors.error),
+              _MacroBadge('${meal.totalFatG}g fat', AppColors.error),
             ],
           ),
         ],

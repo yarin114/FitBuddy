@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/macro_summary.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/craving_fab.dart';
@@ -43,10 +44,33 @@ class _MacroTabState extends ConsumerState<MacroTab>
 
   @override
   Widget build(BuildContext context) {
-    final summary = ref.watch(macroSummaryProvider);
-    final theme   = Theme.of(context);
-    final cs      = theme.colorScheme;
+    final asyncSummary = ref.watch(macroSummaryProvider);
+    final theme        = Theme.of(context);
+    final cs           = theme.colorScheme;
 
+    // While loading or on error, show a centered indicator/message.
+    // The mock fallback in the provider means errors are rare in practice.
+    return asyncSummary.when(
+      loading: () => Scaffold(
+        backgroundColor: cs.surface,
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, _) => Scaffold(
+        backgroundColor: cs.surface,
+        body: Center(
+          child: Text('Could not load macros', style: theme.textTheme.bodyMedium),
+        ),
+      ),
+      data: (summary) => _buildContent(context, theme, cs, summary),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme cs,
+    MacroSummary summary,
+  ) {
     return Scaffold(
       backgroundColor: cs.surface,
       body: CustomScrollView(
