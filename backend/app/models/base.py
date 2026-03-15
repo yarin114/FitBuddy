@@ -1,5 +1,6 @@
 from sqlalchemy import MetaData
-from sqlalchemy.orm import AsyncAttrs, DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase
 
 # Alembic-friendly naming conventions so auto-generated constraint names are
 # deterministic and portable across databases.
