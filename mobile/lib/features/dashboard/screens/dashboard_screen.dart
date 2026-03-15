@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../pantry/screens/pantry_screen.dart';
+import 'macro_tab.dart';
 
 /// DashboardScreen — root shell with bottom NavigationBar.
 ///
-/// Tab 0: Dashboard / Macro Ring  (stub — full implementation is next)
-/// Tab 1: Smart Pantry            (fully implemented)
-/// Tab 2: SOS / CBT               (stub — WebSocket screen coming soon)
+/// Tab 0: MacroTab (calorie ring + macro pills + meal log)
+/// Tab 1: Smart Pantry (fully implemented)
+/// Tab 2: SOS / CBT   (stub — WebSocket screen coming soon)
 ///
 /// Uses IndexedStack so each tab preserves its scroll state.
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -21,7 +22,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _selectedIndex = 0;
 
   static const _tabs = [
-    _MacroTab(),
+    MacroTab(),
     PantryScreen(),
     _SosTab(),
   ];
@@ -58,45 +59,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 }
 
-// ── Stub screens (replaced in next sprint) ────────────────────────────────────
-
-class _MacroTab extends StatelessWidget {
-  const _MacroTab();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs    = theme.colorScheme;
-
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.donut_large_rounded,
-              size:  80,
-              color: cs.primary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Dashboard',
-              style: theme.textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Macro ring widget — coming next sprint',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.45),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// ── Stub screen (replaced in next sprint) ────────────────────────────────────
 
 class _SosTab extends StatelessWidget {
   const _SosTab();
