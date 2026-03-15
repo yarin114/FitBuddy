@@ -15,14 +15,31 @@ def initialize_firebase() -> None:
     Initialize the Firebase Admin SDK using the service-account JSON file
     specified in settings.  Must be called once during application startup
     (inside the FastAPI lifespan handler).
+
+    If the credentials file is missing the SDK is skipped and FCM push
+    notifications will be unavailable, but all other API features continue
+    to work normally.  This allows local development without a Firebase
+    service account.
     """
     global _app
     if _app is not None:
         logger.warning("Firebase Admin SDK already initialised — skipping.")
         return
 
+    import os
     settings = get_settings()
-    cred = credentials.Certificate(settings.firebase_credentials_path)
+    path = settings.firebase_credentials_path
+
+    if not os.path.exists(path):
+        logger.warning(
+            "Firebase service-account file not found at %r — "
+            "FCM push notifications disabled.  "
+            "Add the file and restart to enable push.",
+            path,
+        )
+        return
+
+    cred = credentials.Certificate(path)
     _app = firebase_admin.initialize_app(cred)
     logger.info("Firebase Admin SDK initialised.")
 
