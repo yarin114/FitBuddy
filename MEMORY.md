@@ -4,31 +4,34 @@ This file tracks the current state of the FitBuddy project. It is updated after 
 
 ---
 
-## Project Status: `NOT STARTED`
+## Project Status: `PLANNING — AWAITING ARCHITECTURE APPROVAL`
 
 ## Last Updated
 - Date: 2026-03-15
-- After push: N/A — project not yet initialized
+- After push: Initial blueprint committed and pushed to `main`
 
 ---
 
 ## What Has Been Built
-- Nothing yet. The repository contains only:
-  - `CLAUDE.md` — project guidance for Claude Code
-  - `RULES.md` — development rules
-  - `MEMORY.md` — this file
+- `CLAUDE.md` — project guidance for Claude Code
+- `RULES.md` — development rules (3 rules)
+- `MEMORY.md` — this file
+- `ARCHITECTURE.md` — full system architecture blueprint (pending approval)
+
+## GitHub Remote
+- https://github.com/yarin114/FitBuddy.git (branch: `main`)
 
 ---
 
 ## Current Focus
-- Project scaffolding (backend + Flutter app structure)
+- Architecture approval: waiting for user answers on 5 open questions (see ARCHITECTURE.md § Approval Checklist)
 
 ---
 
-## What Comes Next
+## What Comes Next (after approval)
 1. Initialize Flutter project under `mobile/`
 2. Initialize FastAPI project under `backend/`
-3. Set up PostgreSQL models
+3. Set up PostgreSQL models + Alembic migrations
 4. Set up Firebase (Auth + FCM)
 5. Build Dynamic Macro Engine (API + LLM integration)
 6. Build Proactive Push Agent (CRON worker + FCM)
