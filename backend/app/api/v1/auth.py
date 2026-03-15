@@ -1,0 +1,77 @@
+"""
+Auth routes
+────────────
+POST /api/v1/auth/register
+  Called by Flutter immediately after Firebase sign-up.
+  Creates the user row in PostgreSQL using the verified Firebase token.
+"""
+
+import logging
+
+from fastapi import APIRouter, HTTPException, status
+from sqlalchemy import select
+
+from app.core.dependencies import DBDep, get_db
+from app.core.firebase_admin import verify_firebase_token
+from app.models.user import User
+from app.schemas.user import UserOnboardRequest, UserResponse
+from app.services.macro_service import _calculate_macro_targets
+
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from typing import Annotated
+from fastapi import Depends
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+_bearer = HTTPBearer(auto_error=True)
+
+
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def register(
+    body: UserOnboardRequest,
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(_bearer)],
+    db: DBDep,
+) -> UserResponse:
+    """
+    Create a new user profile linked to the caller's Firebase UID.
+    Idempotent: returns 200 if the user already exists.
+    """
+    try:
+        decoded = verify_firebase_token(credentials.credentials)
+        firebase_uid: str = decoded["uid"]
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired Firebase token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Idempotency check
+    result = await db.execute(select(User).where(User.firebase_uid == firebase_uid))
+    existing = result.scalar_one_or_none()
+    if existing:
+        return UserResponse.from_orm(existing)
+
+    # Calculate macro targets from physical profile
+    targets = _calculate_macro_targets(body)
+
+    user = User(
+        firebase_uid=firebase_uid,
+        name=body.name,
+        email=body.email,
+        date_of_birth=body.date_of_birth,
+        gender=body.gender,
+        weight_kg=body.weight_kg,
+        height_cm=body.height_cm,
+        goal_weight_kg=body.goal_weight_kg,
+        activity_level=body.activity_level,
+        timezone=body.timezone,
+        **targets,
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+
+    logger.info("New user registered: firebase_uid=%s", firebase_uid)
+    return UserResponse.from_orm(user)
