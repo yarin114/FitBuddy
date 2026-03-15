@@ -21,7 +21,8 @@ This file tracks the current state of the FitBuddy project. It is updated after 
   - **Services:** macro_service (budget calc, Mifflin-St Jeor BMR), notification_service (FCM)
   - **AI Agent:** macro_engine.py — Claude 3.5 Sonnet via Tool Use, budget guard, totals validation
   - **System prompt:** agents/prompts/macro_v1.txt (versioned)
-  - **Routes:** POST /meals/generate ✅, POST /meals/log ✅, GET /meals/today ✅, GET /meals/history ✅, GET /macros/today ✅, POST /auth/register ✅, GET/PUT /users/me ✅
+  - **Routes:** POST /meals/generate ✅, POST /meals/log ✅, GET /meals/today ✅, GET /meals/history ✅, GET /macros/today ✅, POST /auth/register ✅, GET/PUT /users/me ✅, WS /sos/ws ✅, GET /sos/sessions ✅
+  - **SOS/CBT:** cbt_agent.py (streaming), sos_service.py, cbt_v1.txt prompt
   - **Workers:** push_worker + behavior_analyzer (full implementation)
   - **Alembic:** async env.py
 
@@ -45,16 +46,15 @@ This file tracks the current state of the FitBuddy project. It is updated after 
 ---
 
 ## Current Focus
-- SOS / CBT WebSocket module (cbt_agent.py + /ws/sos route)
+- Push agent LLM call + Alembic migrations + Dockerfile
 
 ---
 
 ## What Comes Next
-1. SOS WebSocket route (`api/v1/sos.py`) + `agents/cbt_agent.py` + `prompts/cbt_v1.txt`
-2. Push agent LLM call (`agents/push_agent.py`)
-3. Alembic first migration + `alembic.ini` config
-4. Dockerfile + docker-compose
-5. Flutter mobile app scaffold
+1. `agents/push_agent.py` — LLM call for personalised push message generation
+2. Alembic first migration + `alembic.ini` config
+3. Dockerfile + docker-compose (Render/Railway-ready)
+4. Flutter mobile app scaffold
 
 ---
 
