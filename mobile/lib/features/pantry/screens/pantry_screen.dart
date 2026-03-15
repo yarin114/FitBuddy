@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
@@ -337,16 +337,13 @@ class _PantryAppBar extends StatelessWidget {
       expandedHeight: 80,
       backgroundColor: cs.surface,
       actions: [
-        // Debug seed button — visible only in debug builds
-        assert(() {
-          return true;
-        }())
-            ? IconButton(
-                icon:    const Icon(Icons.science_outlined, size: 20),
-                tooltip: 'Load debug pantry data',
-                onPressed: onDebugSeed,
-              )
-            : const SizedBox.shrink(),
+        // Debug seed button — only visible in debug builds
+        if (kDebugMode)
+          IconButton(
+            icon:    const Icon(Icons.science_outlined, size: 20),
+            tooltip: 'Load debug pantry data',
+            onPressed: onDebugSeed,
+          ),
       ],
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),

@@ -231,7 +231,7 @@ abstract final class AppTheme {
     ),
 
     // ── Card ───────────────────────────────────────────────────────────────
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: AppColors.surfaceContainerMax,
       elevation: 0,
       margin: EdgeInsets.zero,

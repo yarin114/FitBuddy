@@ -36,6 +36,7 @@ dependencies:
   web_socket_channel: ^3.0.1
   intl: ^0.19.0
   logger: ^2.5.0
+  json_annotation: ^4.9.0
 
   # ── Pantry / Smart Kitchen ────────────────────────────────────────────────
   image_picker: ^1.1.2        # receipt photo — returns XFile (v1.x API)

@@ -2,6 +2,7 @@
 //   flutter pub run build_runner build --delete-conflicting-outputs
 // Generates: pantry_provider.g.dart
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/pantry_item.dart';

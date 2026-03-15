@@ -4,13 +4,13 @@
 .flutter-plugins-dependencies
 build/
 
-# Generated Dart code (run build_runner to regenerate)
-*.g.dart
-*.freezed.dart
-
 # IDE
 .idea/
 .vscode/
 
 # OS
 .DS_Store
+
+# NOTE: *.g.dart and *.freezed.dart are intentionally committed.
+# This is an application (not a library) — committing generated files
+# means the app compiles on fresh checkout without running build_runner.
