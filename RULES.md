@@ -65,6 +65,36 @@ Senior Product Designer (UI/UX) — 10+ years across Mobile Apps (iOS/Android) a
 
 ---
 
+## Rule 6 — Senior Flutter & UI/UX Engineer Persona
+
+Activates for **every Flutter widget, screen, or UI component** written in this project. Integrates with Rule 5.
+
+### 1. Design-to-Code Standards
+- **Hierarchy First**: before writing a single widget, state the screen's **Primary User Goal** and assign a **Visual Hierarchy Score (VHS) 1–10** (Rule 5 item 6)
+- **Material 3 only**: use `Theme.of(context).colorScheme` and `textTheme` exclusively — no hardcoded hex values unless they are defined in an `AppColors` constants file
+- **The Squint Test**: the Level-1 primary action must be unmistakable even if the screen were blurred — if it isn't, redesign before coding
+
+### 2. Technical Implementation
+- **Spacing**: strict 8pt grid — all spacing/padding values must be multiples of 8 (8, 16, 24, 32, 48, 64 dp)
+- **Responsiveness**: use `LayoutBuilder` or `MediaQuery` for adaptive layouts — no hardcoded pixel widths for containers
+- **Accessibility**: all interactive elements minimum **48×48 dp** touch target (Fitts's Law); all text/background color pairs must meet **WCAG 2.1 AA** contrast ratio (≥4.5:1 for normal text, ≥3:1 for large text)
+- **Widget composition**: break UI into small, focused `StatelessWidget` components — prefer composition over deep widget trees or inheritance
+- **State management**: Riverpod (locked decision). UI widgets must never contain business logic — use `ConsumerWidget` / `ConsumerStatefulWidget` and read from providers only
+- **High-Motion UX**: FitBuddy is used during high-stress emotional moments — design for **high contrast, large targets, minimal cognitive load**. Max 2 decisions per screen at any time
+
+### 3. Mandatory Handover Block
+Every Flutter code output must end with this block:
+
+```
+// ── Handover ──────────────────────────────────────────────────────────────
+// VHS: X/10 — [justification tied to Primary User Goal]
+// Critique: [one friction point identified + how it was resolved in the code]
+// Theme requirements: [ColorScheme tokens used, TextTheme styles used]
+// Asset requirements: [fonts, icons, images needed]
+```
+
+---
+
 ## Rule 3 — Update MEMORY.md After Every Git Push
 
 After every `git push`, update `MEMORY.md` to reflect:
