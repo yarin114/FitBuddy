@@ -4,38 +4,48 @@ This file tracks the current state of the FitBuddy project. It is updated after 
 
 ---
 
-## Project Status: `PLANNING — AWAITING ARCHITECTURE APPROVAL`
+## Project Status: `IN PROGRESS — BACKEND PHASE 1`
 
 ## Last Updated
 - Date: 2026-03-15
-- After push: Initial blueprint committed and pushed to `main`
+- After push: Backend scaffold complete, pushed to `main`
 
 ---
 
 ## What Has Been Built
-- `CLAUDE.md` — project guidance for Claude Code
-- `RULES.md` — development rules (3 rules)
-- `MEMORY.md` — this file
-- `ARCHITECTURE.md` — full system architecture blueprint (pending approval)
+- `CLAUDE.md`, `RULES.md`, `MEMORY.md`, `ARCHITECTURE.md` — project foundation
+- `backend/` — full FastAPI backend scaffold:
+  - **Models (SQLAlchemy 2.0 async):** User, DailyLog, Meal, UserBehaviorPattern, PushNotificationLog, SosSession, AIInteraction
+  - **Core:** config (pydantic-settings), async DB engine, Firebase Admin init, `get_current_user` dependency
+  - **Workers:** APScheduler with push_worker (every 15 min) + behavior_analyzer (weekly)
+  - **Alembic:** async env.py configured for autogenerate
+  - **Stubs:** all API routes, agents, services, schemas (empty, ready to implement)
 
 ## GitHub Remote
 - https://github.com/yarin114/FitBuddy.git (branch: `main`)
 
+## Architectural Decisions (locked)
+- LLM: Anthropic Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`)
+- Deployment: Docker on Render / Railway
+- Push worker: APScheduler inside FastAPI (no Celery/Redis)
+- Flutter state management: Riverpod
+- Phase 1 scope: text cravings + push daemon + SOS WebSocket (no photo scan)
+
 ---
 
 ## Current Focus
-- Architecture approval: waiting for user answers on 5 open questions (see ARCHITECTURE.md § Approval Checklist)
+- Implement API route handlers + Pydantic schemas + service layer
 
 ---
 
-## What Comes Next (after approval)
-1. Initialize Flutter project under `mobile/`
-2. Initialize FastAPI project under `backend/`
-3. Set up PostgreSQL models + Alembic migrations
-4. Set up Firebase (Auth + FCM)
-5. Build Dynamic Macro Engine (API + LLM integration)
-6. Build Proactive Push Agent (CRON worker + FCM)
-7. Build SOS / CBT real-time module (WebSockets)
+## What Comes Next
+1. Pydantic schemas (user, meal, macros, sos)
+2. Service layer: macro_service, notification_service
+3. API routes: `/auth`, `/users`, `/macros`, `/meals`
+4. LLM agents: macro_engine.py + system prompt
+5. SOS WebSocket route + cbt_agent.py
+6. Flutter mobile app scaffold
+7. Docker + deployment config
 
 ---
 
