@@ -9,7 +9,7 @@ part 'api_client.g.dart';
 ///
 /// Override with your Render/Railway deploy URL in production.
 /// In local dev, use the machine's LAN IP so the device can reach it.
-const String _kBaseUrl = 'http://10.0.2.2:8000'; // Android emulator → localhost
+const String _kBaseUrl = 'http://192.168.68.58:8001'; // physical device → PC over LAN
 
 /// Dio HTTP client pre-configured with:
 /// - Base URL pointing at the FastAPI backend
