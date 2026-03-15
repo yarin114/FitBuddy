@@ -1,0 +1,74 @@
+name: fitbuddy
+description: FitBuddy — AI-powered nutrition coaching app.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State management ──────────────────────────────────────────────────────
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # ── Immutable state / data classes ───────────────────────────────────────
+  freezed_annotation: ^2.4.4
+
+  # ── Navigation ────────────────────────────────────────────────────────────
+  go_router: ^14.6.1
+
+  # ── Networking ────────────────────────────────────────────────────────────
+  dio: ^5.7.0
+
+  # ── Firebase ─────────────────────────────────────────────────────────────
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
+  firebase_messaging: ^15.1.5
+
+  # ── Storage ───────────────────────────────────────────────────────────────
+  shared_preferences: ^2.3.4
+
+  # ── Utilities ─────────────────────────────────────────────────────────────
+  web_socket_channel: ^3.0.1
+  intl: ^0.19.0
+  logger: ^2.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # ── Code generation ───────────────────────────────────────────────────────
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.6.1
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+
+  # ── Linting ───────────────────────────────────────────────────────────────
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # ── Fonts (download Inter from Google Fonts and place in assets/fonts/) ──
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter-ExtraBold.ttf
+          weight: 800
+
+  assets:
+    - assets/fonts/
+    - assets/images/
+    - assets/icons/
