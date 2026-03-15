@@ -37,6 +37,10 @@ dependencies:
   intl: ^0.19.0
   logger: ^2.5.0
 
+  # ── Pantry / Smart Kitchen ────────────────────────────────────────────────
+  image_picker: ^1.1.2        # receipt photo — returns XFile (v1.x API)
+  uuid: ^4.5.1                # deterministic PantryItem IDs
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

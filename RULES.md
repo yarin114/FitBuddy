@@ -95,6 +95,18 @@ Every Flutter code output must end with this block:
 
 ---
 
+## Rule 7 — Smart Pantry & Receipt OCR Logic
+
+Applies whenever building pantry, inventory, or receipt-scanning features.
+
+- **Receipt processing**: prioritise extracting product names + quantities. Mapping must be fuzzy-matched to a nutritional database (Levenshtein / fuzzywuzzy)
+- **Inventory state**: use `@riverpod NotifierProvider` (never the deprecated `StateProvider`) to track `currentInventory` as `List<PantryItem>`
+- **Auto-consumption**: when a recipe is "started", call `decrementInventory` for each ingredient — quantities decrement automatically
+- **Confidence Score UX**: every scanned item must carry a `confidenceScore` (0.0–1.0). Items below `0.70` must be visually flagged (`needsVerification = true`) and highlighted in the UI for manual review — this is both a usability and A11y requirement
+- **High-Motion UX**: scan and confirm CTAs must be full-width `FilledButton` with minimum 64dp height (one-thumb operation)
+
+---
+
 ## Rule 3 — Update MEMORY.md After Every Git Push
 
 After every `git push`, update `MEMORY.md` to reflect:
