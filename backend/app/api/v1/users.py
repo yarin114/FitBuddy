@@ -66,8 +66,9 @@ async def complete_profile(
     user.weight_kg       = body.weight_kg
     user.height_cm       = body.height_cm
     user.activity_level  = body.activity_level
-    user.goal            = body.goal
-    user.timezone        = body.timezone
+    user.goal               = body.goal
+    user.timezone           = body.timezone
+    user.preferred_language = body.preferred_language
     user.onboarding_completed = True
 
     targets = _calculate_macro_targets(body)

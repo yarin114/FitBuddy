@@ -1,0 +1,121 @@
+{
+  "@@locale": "he",
+
+  "appName": "פיטבאדי",
+
+  "next": "הבא",
+  "back": "חזרה",
+  "done": "סיום",
+  "cancel": "ביטול",
+  "save": "שמירה",
+  "loading": "טוען…",
+  "unexpectedError": "משהו השתבש. אנא נסה שוב.",
+
+  "calories": "קלוריות",
+  "protein": "חלבון",
+  "carbs": "פחמימות",
+  "fat": "שומן",
+  "kcal": "קל׳",
+
+  "today": "היום",
+  "notifications": "התראות",
+  "todaysMeals": "ארוחות היום",
+  "addMeal": "הוסף ארוחה",
+  "noMealsToday": "עוד לא תועדו ארוחות היום.",
+  "tabDashboard": "דשבורד",
+  "tabPantry": "מזווה",
+  "tabSOS": "SOS",
+  "couldNotLoadMacros": "לא ניתן לטעון את הנתונים",
+  "sosComing": "אימון בזמן אמת — בקרוב",
+
+  "logMealTitle": "מה אכלת?",
+  "logMealSubtitle": "תאר את הארוחה שלך והבינה המלאכותית תחשב את המאקרו.",
+  "logMealHint": "למשל: 2 ביצים ו-100 גרם חזה עוף",
+  "logMealButton": "תיעוד ארוחה",
+  "mealLogged": "תועד",
+  "couldNotLogMeal": "לא ניתן לתעד את הארוחה. אנא נסה שוב.",
+
+  "cravingTitle": "מה בא לך לאכול?",
+  "cravingSubtitle": "תאר את התשוקה שלך ונמצא לך מתכון שמתאים למאקרו.",
+  "cravingHint": "למשל: משהו מתוק ושוקולדי",
+  "generateRecipe": "צור מתכון",
+  "aiPick": "המלצת AI",
+
+  "loginTitle": "ברוך שובך",
+  "signUpTitle": "צור חשבון",
+  "emailLabel": "אימייל",
+  "passwordLabel": "סיסמה",
+  "fullNameLabel": "שם מלא",
+  "logInButton": "כניסה",
+  "createAccountButton": "יצירת חשבון",
+  "switchToSignUp": "אין לך חשבון?",
+  "switchToLogin": "כבר יש לך חשבון?",
+  "signUpLink": "הרשמה",
+  "logInLink": "כניסה",
+  "checkEmailMessage": "בדוק את האימייל שלך לאישור החשבון, ואז התחבר.",
+  "couldNotCreateProfile": "לא ניתן ליצור את הפרופיל. אנא נסה שוב.",
+  "enterName": "הכנס את שמך",
+  "enterEmail": "הכנס את האימייל שלך",
+  "enterValidEmail": "הכנס אימייל תקין",
+  "enterPassword": "הכנס סיסמה",
+  "passwordMinLength": "הסיסמה חייבת להכיל לפחות 6 תווים",
+
+  "onboardingStepOf": "שלב {step} מתוך {total}",
+  "@onboardingStepOf": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "languageTitle": "בחר שפה",
+  "languageSubtitle": "ניתן לשנות זאת בהגדרות בהמשך.",
+  "languageEnglish": "English",
+  "languageHebrew": "עברית",
+
+  "genderTitle": "מה המין שלך?",
+  "genderSubtitle": "זה עוזר לנו לחשב את קצב חילוף החומרים שלך.",
+  "genderMale": "זכר",
+  "genderFemale": "נקבה",
+  "genderOther": "אחר",
+
+  "ageTitle": "בן/בת כמה אתה?",
+  "ageSubtitle": "הגיל משמש לכוונון חישוב הקלוריות שלך.",
+  "yearsOld": "שנים",
+
+  "bodyStatsTitle": "המדידות שלך",
+  "bodyStatsSubtitle": "משמש לחישוב ההוצאה הקלורית היומית הכוללת (TDEE).",
+  "bodyWeightLabel": "משקל גוף",
+  "heightLabel": "גובה",
+
+  "activityTitle": "כמה אתה פעיל?",
+  "activitySubtitle": "בחר את הרמה המתאימה ביותר לשבוע הטיפוסי שלך.",
+  "activitySedentary": "יושבני",
+  "activitySedentaryDesc": "עבודת משרד, מעט פעילות גופנית",
+  "activityLight": "קל",
+  "activityLightDesc": "פעילות גופנית 1–3 פעמים בשבוע",
+  "activityModerate": "בינוני",
+  "activityModerateDesc": "פעילות גופנית 3–5 פעמים בשבוע",
+  "activityActive": "פעיל",
+  "activityActiveDesc": "אימונים עצימים 6–7 פעמים בשבוע",
+  "activityVeryActive": "פעיל מאוד",
+  "activityVeryActiveDesc": "ספורטאי או עבודה פיזית מאומצת",
+
+  "goalTitle": "מה המטרה שלך?",
+  "goalSubtitle": "זה קובע את יעד הקלוריות והפיצול המאקרו שלך.",
+  "goalLose": "ירידה במשקל",
+  "goalMaintain": "שמירה על הקיים",
+  "goalGain": "עלייה במסה",
+  "goalLoseSubtitle": "גרעון של 500 קל׳ ביום",
+  "goalMaintainSubtitle": "שמור על המשקל הנוכחי שלך",
+  "goalGainSubtitle": "עודף של 500 קל׳ ביום",
+  "startJourney": "!בוא נתחיל 🚀",
+
+  "validationGender": "אנא בחר מין",
+  "validationAge": "הכנס גיל תקין (13–100)",
+  "validationMeasurements": "הכנס מדידות תקינות",
+  "validationActivity": "אנא בחר רמת פעילות",
+  "validationGoal": "אנא בחר מטרה",
+
+  "settingsLanguage": "שפה"
+}

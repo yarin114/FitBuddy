@@ -85,6 +85,7 @@ async def generate_push_message(
     calories_remaining: int,
     last_meal_at: datetime | None,
     current_time: datetime,
+    language: str = "en",
 ) -> dict[str, Any]:
     """
     Call Claude 3.5 Sonnet and return a validated push notification dict.
@@ -101,7 +102,7 @@ async def generate_push_message(
     """
     client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
     user_message = _build_user_message(
-        user_name, trigger_reason, calories_remaining, last_meal_at, current_time
+        user_name, trigger_reason, calories_remaining, last_meal_at, current_time, language
     )
 
     logger.debug(
@@ -178,6 +179,7 @@ def _build_user_message(
     calories_remaining: int,
     last_meal_at: datetime | None,
     current_time: datetime,
+    language: str = "en",
 ) -> str:
     hours_since_meal: str
     if last_meal_at is None:
@@ -191,7 +193,8 @@ def _build_user_message(
         f"trigger_reason: {trigger_reason}\n"
         f"calories_remaining: {calories_remaining} kcal\n"
         f"hours_since_meal: {hours_since_meal}\n"
-        f"current_hour: {current_time.hour}\n\n"
+        f"current_hour: {current_time.hour}\n"
+        f"language: {language}\n\n"
         "Generate a personalised push notification for this user. "
         "Call submit_notification with your answer."
     )

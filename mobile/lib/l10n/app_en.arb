@@ -1,0 +1,121 @@
+{
+  "@@locale": "en",
+
+  "appName": "FitBuddy",
+
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+  "cancel": "Cancel",
+  "save": "Save",
+  "loading": "Loading…",
+  "unexpectedError": "Something went wrong. Please try again.",
+
+  "calories": "Calories",
+  "protein": "Protein",
+  "carbs": "Carbs",
+  "fat": "Fat",
+  "kcal": "kcal",
+
+  "today": "Today",
+  "notifications": "Notifications",
+  "todaysMeals": "Today's Meals",
+  "addMeal": "Add meal",
+  "noMealsToday": "No meals logged yet today.",
+  "tabDashboard": "Dashboard",
+  "tabPantry": "Pantry",
+  "tabSOS": "SOS",
+  "couldNotLoadMacros": "Could not load macros",
+  "sosComing": "Real-time coaching — coming soon",
+
+  "logMealTitle": "What did you eat?",
+  "logMealSubtitle": "Describe your meal and the AI will estimate the macros.",
+  "logMealHint": "e.g. 2 eggs and 100g grilled chicken",
+  "logMealButton": "Log Meal",
+  "mealLogged": "Logged",
+  "couldNotLogMeal": "Could not log your meal. Please try again.",
+
+  "cravingTitle": "What are you craving?",
+  "cravingSubtitle": "Describe your craving and we'll find a macro-friendly recipe.",
+  "cravingHint": "e.g. something sweet and chocolatey",
+  "generateRecipe": "Generate Recipe",
+  "aiPick": "AI Pick",
+
+  "loginTitle": "Welcome back",
+  "signUpTitle": "Create your account",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "fullNameLabel": "Full name",
+  "logInButton": "Log In",
+  "createAccountButton": "Create Account",
+  "switchToSignUp": "Don't have an account?",
+  "switchToLogin": "Already have an account?",
+  "signUpLink": "Sign Up",
+  "logInLink": "Log In",
+  "checkEmailMessage": "Check your email to confirm your account, then log in.",
+  "couldNotCreateProfile": "Could not create your profile. Please try again.",
+  "enterName": "Enter your name",
+  "enterEmail": "Enter your email",
+  "enterValidEmail": "Enter a valid email",
+  "enterPassword": "Enter your password",
+  "passwordMinLength": "Password must be at least 6 characters",
+
+  "onboardingStepOf": "Step {step} of {total}",
+  "@onboardingStepOf": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "languageTitle": "Choose your language",
+  "languageSubtitle": "You can change this later in Settings.",
+  "languageEnglish": "English",
+  "languageHebrew": "עברית (Hebrew)",
+
+  "genderTitle": "What's your gender?",
+  "genderSubtitle": "This helps us calculate your metabolic rate accurately.",
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderOther": "Other",
+
+  "ageTitle": "How old are you?",
+  "ageSubtitle": "Age is used to fine-tune your calorie calculations.",
+  "yearsOld": "years old",
+
+  "bodyStatsTitle": "Your measurements",
+  "bodyStatsSubtitle": "Used to calculate your Total Daily Energy Expenditure (TDEE).",
+  "bodyWeightLabel": "Body weight",
+  "heightLabel": "Height",
+
+  "activityTitle": "How active are you?",
+  "activitySubtitle": "Choose the level that best matches your typical week.",
+  "activitySedentary": "Sedentary",
+  "activitySedentaryDesc": "Desk job, little or no exercise",
+  "activityLight": "Light",
+  "activityLightDesc": "Exercise 1–3× per week",
+  "activityModerate": "Moderate",
+  "activityModerateDesc": "Exercise 3–5× per week",
+  "activityActive": "Active",
+  "activityActiveDesc": "Hard exercise 6–7× per week",
+  "activityVeryActive": "Very Active",
+  "activityVeryActiveDesc": "Athlete or physically demanding job",
+
+  "goalTitle": "What's your goal?",
+  "goalSubtitle": "This determines your calorie target and macro split.",
+  "goalLose": "Lose Weight",
+  "goalMaintain": "Maintain",
+  "goalGain": "Gain Muscle",
+  "goalLoseSubtitle": "-500 kcal/day deficit",
+  "goalMaintainSubtitle": "Stay at your current weight",
+  "goalGainSubtitle": "+500 kcal/day surplus",
+  "startJourney": "Start My Journey 🚀",
+
+  "validationGender": "Please select your gender",
+  "validationAge": "Enter a valid age (13–100)",
+  "validationMeasurements": "Enter valid measurements",
+  "validationActivity": "Please select your activity level",
+  "validationGoal": "Please select your goal",
+
+  "settingsLanguage": "Language"
+}

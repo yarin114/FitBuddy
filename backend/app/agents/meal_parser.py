@@ -65,7 +65,7 @@ class MealParserError(Exception):
     """Raised when the LLM fails to parse the meal description."""
 
 
-async def parse_meal_text(text: str) -> dict:
+async def parse_meal_text(text: str, language: str = "en") -> dict:
     """
     Parse a free-text meal description and return structured macro data.
 
@@ -85,7 +85,10 @@ async def parse_meal_text(text: str) -> dict:
             messages=[
                 {
                     "role": "user",
-                    "content": f'Estimate the macros for: "{text}"',
+                    "content": (
+                        f'language: {language}\n'
+                        f'Estimate the macros for: "{text}"'
+                    ),
                 }
             ],
         )

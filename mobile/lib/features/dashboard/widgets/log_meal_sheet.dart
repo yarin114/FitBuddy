@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/dashboard_provider.dart';
 
 /// Opens the "What did you eat?" bottom sheet modal.
@@ -51,16 +52,15 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
       );
       if (mounted) {
         setState(() {
-          _loading = true; // keep true until we fire invalidate
+          _loading = true;
           _result  = _ParsedMeal.fromJson(response.data!);
         });
-        // Refresh macro ring and meal list immediately.
         ref.invalidate(macroSummaryProvider);
         if (mounted) setState(() => _loading = false);
       }
     } on DioException catch (e) {
       final detail = (e.response?.data as Map?)?['detail'] as String?
-          ?? 'Could not log your meal. Please try again.';
+          ?? AppLocalizations.of(context).couldNotLogMeal;
       if (mounted) setState(() { _loading = false; _error = detail; });
     } catch (_) {
       if (mounted) setState(() { _loading = false; _error = 'Unexpected error. Please try again.'; });
@@ -98,12 +98,12 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
 
           // ── Title ─────────────────────────────────────────────────────────
           Text(
-            'What did you eat?',
+            AppLocalizations.of(context).logMealTitle,
             style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
-            'Describe your meal and the AI will estimate the macros.',
+            AppLocalizations.of(context).logMealSubtitle,
             style: theme.textTheme.bodySmall?.copyWith(color: AppColors.onSurfaceMuted),
           ),
           const SizedBox(height: 16),
@@ -118,7 +118,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
             minLines: 1,
             maxLines: 3,
             decoration: InputDecoration(
-              hintText:  'e.g. 2 eggs and 100g grilled chicken',
+              hintText:  AppLocalizations.of(context).logMealHint,
               filled:    true,
               fillColor: cs.surfaceContainer,
               border: OutlineInputBorder(
@@ -151,9 +151,9 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                           color:       Colors.black,
                         ),
                       )
-                    : const Text(
-                        'Log Meal',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                    : Text(
+                        AppLocalizations.of(context).logMealButton,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
               ),
             ),
@@ -190,7 +190,7 @@ class _LogMealSheetState extends ConsumerState<_LogMealSheet> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w700)),
+                child: Text(AppLocalizations.of(context).done, style: const TextStyle(fontWeight: FontWeight.w700)),
               ),
             ),
           ],
@@ -261,7 +261,7 @@ class _LoggedMealCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'Logged',
+                  AppLocalizations.of(context).mealLogged,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color:      AppColors.success,
                     fontWeight: FontWeight.w700,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../pantry/screens/pantry_screen.dart';
 import 'macro_tab.dart';
 
@@ -37,21 +38,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon:       Icon(Icons.donut_large_outlined),
-            selectedIcon: Icon(Icons.donut_large_rounded),
-            label:      'Dashboard',
+            icon:        const Icon(Icons.donut_large_outlined),
+            selectedIcon: const Icon(Icons.donut_large_rounded),
+            label:       AppLocalizations.of(context).tabDashboard,
           ),
           NavigationDestination(
-            icon:       Icon(Icons.kitchen_outlined),
-            selectedIcon: Icon(Icons.kitchen_rounded),
-            label:      'Pantry',
+            icon:        const Icon(Icons.kitchen_outlined),
+            selectedIcon: const Icon(Icons.kitchen_rounded),
+            label:       AppLocalizations.of(context).tabPantry,
           ),
           NavigationDestination(
-            icon:       Icon(Icons.favorite_border_rounded),
-            selectedIcon: Icon(Icons.favorite_rounded),
-            label:      'SOS',
+            icon:        const Icon(Icons.favorite_border_rounded),
+            selectedIcon: const Icon(Icons.favorite_rounded),
+            label:       AppLocalizations.of(context).tabSOS,
           ),
         ],
       ),
@@ -84,7 +85,7 @@ class _SosTab extends StatelessWidget {
             Text('SOS / CBT', style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
-              'Real-time coaching — coming soon',
+              AppLocalizations.of(context).sosComing,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: cs.onSurface.withValues(alpha: 0.45),
               ),

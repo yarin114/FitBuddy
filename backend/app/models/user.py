@@ -50,6 +50,11 @@ class User(Base):
     daily_carbs_g: Mapped[Optional[int]] = mapped_column(nullable=True)
     daily_fat_g: Mapped[Optional[int]] = mapped_column(nullable=True)
 
+    # Localisation — ISO 639-1: en | he
+    preferred_language: Mapped[str] = mapped_column(
+        String(5), nullable=False, default="en", server_default="en"
+    )
+
     # Device / notification
     fcm_token: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     timezone: Mapped[str] = mapped_column(String(64), nullable=False, default="UTC")

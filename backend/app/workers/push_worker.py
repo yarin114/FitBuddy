@@ -107,6 +107,7 @@ async def _evaluate_and_notify(db: AsyncSession, user: User) -> bool:
         calories_remaining=calories_remaining,
         last_meal_at=daily_log.last_meal_at,
         current_time=now_utc,
+        language=getattr(user, "preferred_language", "en"),
     )
 
     # ── Send FCM ─────────────────────────────────────────────────────────────

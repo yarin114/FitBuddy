@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Floating Action Button that opens the "What am I craving?" bottom sheet.
 class CravingFab extends StatelessWidget {
@@ -115,12 +116,12 @@ class _CravingSheetState extends ConsumerState<_CravingSheet> {
 
           // ── Title ─────────────────────────────────────────────────────────
           Text(
-            "What are you craving?",
+            AppLocalizations.of(context).cravingTitle,
             style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
-            "Describe your craving and we'll find a macro-friendly recipe.",
+            AppLocalizations.of(context).cravingSubtitle,
             style: theme.textTheme.bodySmall?.copyWith(color: AppColors.onSurfaceMuted),
           ),
           const SizedBox(height: 16),
@@ -132,7 +133,7 @@ class _CravingSheetState extends ConsumerState<_CravingSheet> {
             textInputAction: TextInputAction.done,
             onSubmitted:     (_) => _generate(),
             decoration: InputDecoration(
-              hintText: 'e.g. something sweet and chocolatey',
+              hintText: AppLocalizations.of(context).cravingHint,
               filled:   true,
               fillColor: cs.surfaceContainer,
               border: OutlineInputBorder(
@@ -161,9 +162,9 @@ class _CravingSheetState extends ConsumerState<_CravingSheet> {
                       width: 22, height: 22,
                       child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.black),
                     )
-                  : const Text(
-                      'Generate Recipe',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                  : Text(
+                      AppLocalizations.of(context).generateRecipe,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
             ),
           ),
@@ -260,7 +261,7 @@ class _RecipeResultCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'AI Pick',
+                  AppLocalizations.of(context).aiPick,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color:      AppColors.primaryLime,
                     fontWeight: FontWeight.w700,

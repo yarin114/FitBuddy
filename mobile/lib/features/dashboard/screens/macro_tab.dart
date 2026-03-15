@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/macro_summary.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/calorie_ring.dart';
@@ -60,7 +61,10 @@ class _MacroTabState extends ConsumerState<MacroTab>
       error: (e, _) => Scaffold(
         backgroundColor: cs.surface,
         body: Center(
-          child: Text('Could not load macros', style: theme.textTheme.bodyMedium),
+          child: Text(
+            AppLocalizations.of(context).couldNotLoadMacros,
+            style: theme.textTheme.bodyMedium,
+          ),
         ),
       ),
       data: (summary) => _buildContent(context, theme, cs, summary),
@@ -83,7 +87,7 @@ class _MacroTabState extends ConsumerState<MacroTab>
             backgroundColor: cs.surface,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              'Today',
+              AppLocalizations.of(context).today,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
@@ -127,14 +131,14 @@ class _MacroTabState extends ConsumerState<MacroTab>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Today's Meals",
+                    AppLocalizations.of(context).todaysMeals,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   TextButton(
                     onPressed: () => showLogMealSheet(context),
-                    child: const Text('Add meal'),
+                    child: Text(AppLocalizations.of(context).addMeal),
                   ),
                 ],
               ),
@@ -148,7 +152,7 @@ class _MacroTabState extends ConsumerState<MacroTab>
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Center(
                   child: Text(
-                    'No meals logged yet today.',
+                    AppLocalizations.of(context).noMealsToday,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: cs.onSurfaceVariant,
                     ),

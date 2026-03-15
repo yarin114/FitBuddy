@@ -41,6 +41,7 @@ class UserProfileRequest(BaseModel):
     )
     goal: str = Field(..., pattern="^(lose_weight|maintain|gain_muscle)$")
     timezone: str = Field(default="UTC", max_length=64)
+    preferred_language: str = Field(default="en", pattern="^(en|he)$")
 
 
 class UserUpdateRequest(BaseModel):
@@ -58,6 +59,7 @@ class UserUpdateRequest(BaseModel):
     )
     fcm_token: Optional[str] = Field(None, max_length=512)
     timezone: Optional[str] = Field(None, max_length=64)
+    preferred_language: Optional[str] = Field(None, pattern="^(en|he)$")
 
 
 # ── Outbound ──────────────────────────────────────────────────────────────────
@@ -82,6 +84,7 @@ class UserResponse(BaseModel):
     activity_level: Optional[str]
     goal: Optional[str]
     onboarding_completed: bool
+    preferred_language: str
     timezone: str
     macro_targets: MacroTargets
     created_at: datetime
@@ -103,6 +106,7 @@ class UserResponse(BaseModel):
             activity_level=user.activity_level,
             goal=user.goal,
             onboarding_completed=user.onboarding_completed,
+            preferred_language=user.preferred_language,
             timezone=user.timezone,
             macro_targets=MacroTargets(
                 daily_calorie_target=user.daily_calorie_target,

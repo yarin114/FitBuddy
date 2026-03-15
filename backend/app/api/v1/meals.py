@@ -188,7 +188,10 @@ async def log_meal_from_text(
     4. Return the saved MealResponse.
     """
     try:
-        parsed = await parse_meal_text(body.text)
+        parsed = await parse_meal_text(
+            body.text,
+            language=getattr(user, "preferred_language", "en"),
+        )
     except MealParserError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
