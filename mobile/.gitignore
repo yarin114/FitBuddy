@@ -1,0 +1,16 @@
+# Flutter generated / build artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Generated Dart code (run build_runner to regenerate)
+*.g.dart
+*.freezed.dart
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

@@ -112,10 +112,18 @@ async def _evaluate_and_notify(db: AsyncSession, user: User) -> bool:
     # ── Send FCM ─────────────────────────────────────────────────────────────
     from app.services.notification_service import send_push
 
+    # Forward suggested_craving (if present) as FCM data payload so the
+    # Flutter client can deep-link directly to the Macro Engine with the
+    # rescue recipe pre-filled.
+    fcm_data: dict | None = None
+    if message.get("suggested_craving"):
+        fcm_data = {"suggested_craving": message["suggested_craving"]}
+
     await send_push(
         fcm_token=user.fcm_token,
         title=message["title"],
         body=message["body"],
+        data=fcm_data,
     )
 
     # ── Persist log ──────────────────────────────────────────────────────────

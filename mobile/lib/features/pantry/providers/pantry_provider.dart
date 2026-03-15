@@ -126,17 +126,33 @@ List<RecipeSuggestion> smartSuggestions(Ref ref) {
 
   return _sampleRecipes
       .map((recipe) {
-        final matched = recipe.requiredIngredients
-            .where((ing) => inventoryNames.any((name) => name.contains(ing)))
-            .length;
+        final missing = recipe.requiredIngredients
+            .where((ing) => !inventoryNames.any((name) => name.contains(ing)))
+            .toList();
+        final matched  = recipe.requiredIngredients.length - missing.length;
         final coverage = recipe.requiredIngredients.isEmpty
             ? 0.0
             : matched / recipe.requiredIngredients.length;
-        return recipe.copyWith(inventoryCoverage: coverage);
+        return recipe.copyWith(
+          inventoryCoverage:   coverage,
+          missingIngredients: missing,
+        );
       })
       .where((r) => r.inventoryCoverage > 0)
       .toList()
     ..sort((a, b) => b.inventoryCoverage.compareTo(a.inventoryCoverage));
+}
+
+/// Filtered recipe suggestions — only recipes where >80% of ingredients
+/// are in the current inventory ("Cookable Now").
+///
+/// Threshold: 0.8 — user has at least 4 out of 5 required ingredients.
+@riverpod
+List<RecipeSuggestion> filteredRecipes(Ref ref) {
+  return ref
+      .watch(smartSuggestionsProvider)
+      .where((r) => r.cookableNow)
+      .toList();
 }
 
 // ── Receipt scanning async notifier ──────────────────────────────────────────
@@ -169,22 +185,33 @@ class RecipeSuggestion {
   final String       name;
   final int          calories;
   final List<String> requiredIngredients;
-  final double       inventoryCoverage; // 0.0–1.0
+  final double       inventoryCoverage;   // 0.0–1.0
+  final List<String> missingIngredients;  // populated by smartSuggestionsProvider
 
   const RecipeSuggestion({
     required this.id,
     required this.name,
     required this.calories,
     required this.requiredIngredients,
-    this.inventoryCoverage = 0.0,
+    this.inventoryCoverage   = 0.0,
+    this.missingIngredients  = const [],
   });
 
-  RecipeSuggestion copyWith({double? inventoryCoverage}) => RecipeSuggestion(
-        id:                   id,
-        name:                 name,
-        calories:             calories,
-        requiredIngredients:  requiredIngredients,
-        inventoryCoverage:    inventoryCoverage ?? this.inventoryCoverage,
+  /// True when ≥80% of required ingredients are in inventory.
+  /// Used by [filteredRecipesProvider] to surface "Cookable Now" recipes.
+  bool get cookableNow => inventoryCoverage >= 0.8;
+
+  RecipeSuggestion copyWith({
+    double?       inventoryCoverage,
+    List<String>? missingIngredients,
+  }) =>
+      RecipeSuggestion(
+        id:                  id,
+        name:                name,
+        calories:            calories,
+        requiredIngredients: requiredIngredients,
+        inventoryCoverage:   inventoryCoverage  ?? this.inventoryCoverage,
+        missingIngredients:  missingIngredients ?? this.missingIngredients,
       );
 }
 
