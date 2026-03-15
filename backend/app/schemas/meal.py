@@ -44,6 +44,17 @@ class MealLogManualRequest(BaseModel):
     total_fat_g: int = Field(..., ge=0)
 
 
+class MealLogTextRequest(BaseModel):
+    """Client logs a meal using plain-text description; AI parses the macros."""
+
+    text: str = Field(
+        ...,
+        min_length=2,
+        max_length=500,
+        description='Free-text description, e.g. "2 eggs and 100g chicken breast"',
+    )
+
+
 # ── Outbound ──────────────────────────────────────────────────────────────────
 
 class MealResponse(BaseModel):

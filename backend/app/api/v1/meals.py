@@ -15,10 +15,11 @@ from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import select
 
 from app.agents.macro_engine import MacroEngineError, generate_recipe
+from app.agents.meal_parser import MealParserError, parse_meal_text
 from app.core.dependencies import CurrentUser, DBDep
 from app.models.ai_interaction import AIInteraction
 from app.models.meal import Meal
-from app.schemas.meal import MealGenerateRequest, MealLogManualRequest, MealResponse
+from app.schemas.meal import MealGenerateRequest, MealLogManualRequest, MealLogTextRequest, MealResponse
 from app.services.macro_service import (
     apply_meal_to_log,
     compute_budget,
@@ -164,6 +165,71 @@ async def log_meal_manually(
 
     await db.commit()
     await db.refresh(meal)
+    return MealResponse.model_validate(meal)
+
+
+@router.post(
+    "/log-text",
+    response_model=MealResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Log a meal from a plain-text description using AI macro parsing",
+)
+async def log_meal_from_text(
+    body: MealLogTextRequest,
+    user: CurrentUser,
+    db: DBDep,
+) -> MealResponse:
+    """
+    AI Nutritionist endpoint.
+
+    1. Send the user's free-text description to Claude (Tool Use).
+    2. Claude returns structured {meal_name, calories, protein_g, carbs_g, fat_g}.
+    3. Persist the Meal and update today's DailyLog running totals atomically.
+    4. Return the saved MealResponse.
+    """
+    try:
+        parsed = await parse_meal_text(body.text)
+    except MealParserError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=str(exc),
+        )
+
+    daily_log = await get_or_create_today_log(db, user)
+
+    meal = Meal(
+        user_id=user.id,
+        daily_log_id=daily_log.id,
+        name=parsed["meal_name"],
+        ingredients=[],
+        instructions="",
+        total_calories=parsed["calories"],
+        total_protein_g=parsed["protein_g"],
+        total_carbs_g=parsed["carbs_g"],
+        total_fat_g=parsed["fat_g"],
+        craving_input=body.text,
+        source="ai_parsed",
+    )
+    db.add(meal)
+
+    await apply_meal_to_log(
+        db=db,
+        log=daily_log,
+        calories=meal.total_calories,
+        protein_g=meal.total_protein_g,
+        carbs_g=meal.total_carbs_g,
+        fat_g=meal.total_fat_g,
+    )
+
+    await db.commit()
+    await db.refresh(meal)
+
+    logger.info(
+        "meal logged via text: user=%s name=%r calories=%d",
+        user.id,
+        meal.name,
+        meal.total_calories,
+    )
     return MealResponse.model_validate(meal)
 
 

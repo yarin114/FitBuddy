@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../models/macro_summary.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/craving_fab.dart';
+import '../widgets/log_meal_sheet.dart';
 import '../widgets/macro_pill_row.dart';
 import '../widgets/meal_list_tile.dart';
 
@@ -131,7 +133,7 @@ class _MacroTabState extends ConsumerState<MacroTab>
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => showLogMealSheet(context),
                     child: const Text('Add meal'),
                   ),
                 ],
@@ -168,7 +170,35 @@ class _MacroTabState extends ConsumerState<MacroTab>
           const SliverToBoxAdapter(child: SizedBox(height: 96)),
         ],
       ),
-      floatingActionButton: const CravingFab(),
+      floatingActionButton: Column(
+        mainAxisSize:       MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Secondary: craving / AI recipe generation
+          FloatingActionButton.small(
+            heroTag:         'fab_craving',
+            onPressed:       () => showCravingSheet(context),
+            backgroundColor: AppColors.primaryLime.withValues(alpha: 0.85),
+            foregroundColor: Colors.black,
+            elevation:       2,
+            child: const Icon(Icons.restaurant_menu_rounded, size: 20),
+          ),
+          const SizedBox(height: 12),
+          // Primary: log a meal you already ate
+          SizedBox(
+            width: 64, height: 64,
+            child: FloatingActionButton(
+              heroTag:         'fab_log_meal',
+              onPressed:       () => showLogMealSheet(context),
+              backgroundColor: AppColors.primaryLime,
+              foregroundColor: Colors.black,
+              elevation:       4,
+              shape:           const CircleBorder(),
+              child:           const Icon(Icons.add, size: 28),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
