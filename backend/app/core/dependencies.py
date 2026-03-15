@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import AsyncSessionLocal
-from app.core.firebase_admin import verify_firebase_token
+from app.core.supabase_auth import verify_supabase_token
 from app.models.user import User
 
 # Extracts "Bearer <token>" from the Authorization header.
@@ -32,15 +32,15 @@ async def get_current_user(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User:
     """
-    Verify the Firebase ID token and return the matching User row.
+    Verify the Supabase JWT and return the matching User row.
 
     Raises HTTP 401 if the token is invalid/expired.
-    Raises HTTP 404 if the Firebase UID has no matching user row
+    Raises HTTP 404 if the Supabase UID has no matching user row
     (the client should trigger the onboarding flow in that case).
     """
     try:
-        decoded = verify_firebase_token(credentials.credentials)
-        firebase_uid: str = decoded["uid"]
+        claims = verify_supabase_token(credentials.credentials)
+        supabase_uid: str = claims["sub"]
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -48,7 +48,7 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    result = await db.execute(select(User).where(User.firebase_uid == firebase_uid))
+    result = await db.execute(select(User).where(User.supabase_uid == supabase_uid))
     user = result.scalar_one_or_none()
 
     if user is None:

@@ -22,7 +22,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    firebase_uid: Mapped[str] = mapped_column(
+    supabase_uid: Mapped[str] = mapped_column(
         String(128), unique=True, nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)

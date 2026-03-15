@@ -11,34 +11,36 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # ── State management ──────────────────────────────────────────────────────
+  # State management
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
 
-  # ── Immutable state / data classes ───────────────────────────────────────
+  # Immutable state / data classes
   freezed_annotation: ^2.4.4
 
-  # ── Navigation ────────────────────────────────────────────────────────────
+  # Navigation
   go_router: ^14.6.1
 
-  # ── Networking ────────────────────────────────────────────────────────────
+  # Networking
   dio: ^5.7.0
 
-  # ── Firebase ─────────────────────────────────────────────────────────────
+  # Auth: Supabase (replaces firebase_auth)
+  supabase_flutter: ^2.8.4
+
+  # Firebase (FCM push notifications only — auth moved to Supabase)
   firebase_core: ^3.8.1
-  firebase_auth: ^5.3.4
   firebase_messaging: ^15.1.5
 
-  # ── Storage ───────────────────────────────────────────────────────────────
+  # Storage
   shared_preferences: ^2.3.4
 
-  # ── Utilities ─────────────────────────────────────────────────────────────
+  # Utilities
   web_socket_channel: ^3.0.1
   intl: ^0.19.0
   logger: ^2.5.0
   json_annotation: ^4.9.0
 
-  # ── Pantry / Smart Kitchen ────────────────────────────────────────────────
+  # Pantry / Smart Kitchen
   image_picker: ^1.1.2        # receipt photo — returns XFile (v1.x API)
   uuid: ^4.5.1                # deterministic PantryItem IDs
 
@@ -46,19 +48,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # ── Code generation ───────────────────────────────────────────────────────
+  # Code generation
   build_runner: ^2.4.13
   riverpod_generator: ^2.6.1
   freezed: ^2.5.7
   json_serializable: ^6.8.0
 
-  # ── Linting ───────────────────────────────────────────────────────────────
+  # Linting
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
 
-  # ── Fonts ──────────────────────────────────────────────────────────────────
+  # Fonts
   # Inter TTF files are not yet committed. To enable:
   #   1. Download Inter from https://fonts.google.com/specimen/Inter
   #   2. Place the 5 weights in mobile/assets/fonts/

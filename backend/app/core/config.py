@@ -14,7 +14,11 @@ class Settings(BaseSettings):
     # ── Database ──────────────────────────────────────────────────────────────
     database_url: str  # must use postgresql+asyncpg:// scheme
 
-    # ── Firebase ──────────────────────────────────────────────────────────────
+    # ── Supabase (Auth + DB) ──────────────────────────────────────────────────
+    supabase_url: str                # e.g. https://xxxx.supabase.co
+    supabase_jwt_secret: str         # Project Settings → API → JWT Secret
+
+    # ── Firebase (FCM push notifications only) ────────────────────────────────
     firebase_credentials_path: str
 
     # ── Anthropic ─────────────────────────────────────────────────────────────

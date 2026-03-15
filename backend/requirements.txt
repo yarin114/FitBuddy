@@ -11,7 +11,10 @@ alembic==1.14.0
 pydantic==2.10.3
 pydantic-settings==2.7.0
 
-# Firebase
+# Auth: Supabase JWT verification
+PyJWT==2.10.1
+
+# Firebase (FCM push notifications only — no longer used for auth)
 firebase-admin==6.6.0
 
 # AI
