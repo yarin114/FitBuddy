@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
-import 'features/dashboard/screens/dashboard_screen.dart';
+import 'features/auth/screens/auth_gate.dart';
 
 /// FitBuddy — entry point.
 ///
-/// Auth: Supabase (replace the placeholder values with your project credentials).
+/// Auth: Supabase
 ///   SUPABASE_URL  — Project Settings → API → Project URL
 ///   SUPABASE_ANON — Project Settings → API → anon / public key
 ///
@@ -17,14 +17,14 @@ import 'features/dashboard/screens/dashboard_screen.dart';
 ///
 /// TODO: move Supabase URL + key out of source once you have a build-time
 /// env-var mechanism (e.g. --dart-define or flutter_dotenv).
-const String _supabaseUrl  = 'YOUR_SUPABASE_URL';   // replace before first run
-const String _supabaseAnon = 'YOUR_SUPABASE_ANON';  // replace before first run
+const String _supabaseUrl  = 'https://ijtopsxgvrnmebcpenmy.supabase.co';
+const String _supabaseAnon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqdG9wc3hndnJubWViY3Blbm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NjQwNjMsImV4cCI6MjA4OTE0MDA2M30.gSrfhbCvhGNLbVykKfuTYIqYShUx751iot1cOTDyT4A';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url:    _supabaseUrl,
+    url:     _supabaseUrl,
     anonKey: _supabaseAnon,
   );
 
@@ -46,12 +46,13 @@ class FitBuddyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title:                    'FitBuddy',
+      title:                      'FitBuddy',
       debugShowCheckedModeBanner: false,
-      theme:                    AppTheme.light,
-      darkTheme:                AppTheme.dark,
-      themeMode:                ThemeMode.dark,
-      home:                     const DashboardScreen(),
+      theme:                      AppTheme.light,
+      darkTheme:                  AppTheme.dark,
+      themeMode:                  ThemeMode.dark,
+      // AuthGate decides: DashboardScreen (logged in) or AuthScreen (logged out).
+      home: const AuthGate(),
     );
   }
 }

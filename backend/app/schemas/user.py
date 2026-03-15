@@ -47,7 +47,7 @@ class MacroTargets(BaseModel):
 
 class UserResponse(BaseModel):
     id: UUID
-    firebase_uid: str
+    supabase_uid: str
     name: str
     email: str
     date_of_birth: Optional[date]
@@ -66,7 +66,7 @@ class UserResponse(BaseModel):
     def from_orm(cls, user) -> "UserResponse":
         return cls(
             id=user.id,
-            firebase_uid=user.firebase_uid,
+            supabase_uid=user.supabase_uid,
             name=user.name,
             email=user.email,
             date_of_birth=user.date_of_birth,

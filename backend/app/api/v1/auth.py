@@ -1,9 +1,10 @@
 """
 Auth routes
-────────────
+------------
 POST /api/v1/auth/register
-  Called by Flutter immediately after Firebase sign-up.
-  Creates the user row in PostgreSQL using the verified Firebase token.
+  Called by Flutter immediately after Supabase sign-up.
+  Creates the user row in PostgreSQL using the verified Supabase JWT.
+  Idempotent: returns the existing row if the user already registered.
 """
 
 import logging
@@ -11,8 +12,8 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
 
-from app.core.dependencies import DBDep, get_db
-from app.core.firebase_admin import verify_firebase_token
+from app.core.dependencies import DBDep
+from app.core.supabase_auth import verify_supabase_token
 from app.models.user import User
 from app.schemas.user import UserOnboardRequest, UserResponse
 from app.services.macro_service import _calculate_macro_targets
@@ -34,30 +35,30 @@ async def register(
     db: DBDep,
 ) -> UserResponse:
     """
-    Create a new user profile linked to the caller's Firebase UID.
+    Create a new user profile linked to the caller's Supabase UID.
     Idempotent: returns 200 if the user already exists.
     """
     try:
-        decoded = verify_firebase_token(credentials.credentials)
-        firebase_uid: str = decoded["uid"]
+        claims = verify_supabase_token(credentials.credentials)
+        supabase_uid: str = claims["sub"]
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired Firebase token.",
+            detail="Invalid or expired Supabase token.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     # Idempotency check
-    result = await db.execute(select(User).where(User.firebase_uid == firebase_uid))
+    result = await db.execute(select(User).where(User.supabase_uid == supabase_uid))
     existing = result.scalar_one_or_none()
     if existing:
         return UserResponse.from_orm(existing)
 
-    # Calculate macro targets from physical profile
+    # Calculate macro targets from physical profile (has sensible defaults for all fields)
     targets = _calculate_macro_targets(body)
 
     user = User(
-        firebase_uid=firebase_uid,
+        supabase_uid=supabase_uid,
         name=body.name,
         email=body.email,
         date_of_birth=body.date_of_birth,
@@ -73,5 +74,5 @@ async def register(
     await db.commit()
     await db.refresh(user)
 
-    logger.info("New user registered: firebase_uid=%s", firebase_uid)
+    logger.info("New user registered: supabase_uid=%s", supabase_uid)
     return UserResponse.from_orm(user)
