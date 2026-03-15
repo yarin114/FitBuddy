@@ -46,7 +46,17 @@ This file tracks the current state of the FitBuddy project. It is updated after 
 ---
 
 ## Current Focus
-- Push agent LLM call + Alembic migrations + Dockerfile
+- Flutter: Dashboard screen + macro ring widget
+
+## Flutter — What's Been Built
+- `core/theme/` — AppColors (Electric Lime, full WCAG tokens), AppTheme (Material 3 dark, all component overrides)
+- `features/workout/providers/` — @freezed WorkoutState + @riverpod WorkoutNotifier (Timer-based)
+- `features/pantry/` — Full Smart Pantry feature:
+  - `models/pantry_item.dart` — @freezed with expiryDate, confidenceScore, PantryCategory
+  - `services/pantry_service.dart` — mock OCR + inline Levenshtein fuzzy matcher + 19-item nutritional DB
+  - `providers/pantry_provider.dart` — PantryNotifier (addItemsFromReceipt, consumeIngredients), expiringSoonItemsProvider, smartSuggestionsProvider, ReceiptScannerProvider
+  - `widgets/` — ConfidenceBadge, PantryItemCard (Dismissible), ScanConfirmationSheet (80dp CTA)
+  - `screens/pantry_screen.dart` — CustomScrollView, SliverAppBar, Material3 SearchBar, Expiring Soon strip, Cook Now suggestions, 64dp FAB
 
 ---
 
