@@ -4,48 +4,57 @@ This file tracks the current state of the FitBuddy project. It is updated after 
 
 ---
 
-## Project Status: `IN PROGRESS — BACKEND PHASE 1`
+## Project Status: `IN PROGRESS — BACKEND PHASE 2`
 
 ## Last Updated
 - Date: 2026-03-15
-- After push: Backend scaffold complete, pushed to `main`
+- After push: Dynamic Macro Engine fully implemented and pushed
 
 ---
 
 ## What Has Been Built
 - `CLAUDE.md`, `RULES.md`, `MEMORY.md`, `ARCHITECTURE.md` — project foundation
-- `backend/` — full FastAPI backend scaffold:
-  - **Models (SQLAlchemy 2.0 async):** User, DailyLog, Meal, UserBehaviorPattern, PushNotificationLog, SosSession, AIInteraction
-  - **Core:** config (pydantic-settings), async DB engine, Firebase Admin init, `get_current_user` dependency
-  - **Workers:** APScheduler with push_worker (every 15 min) + behavior_analyzer (weekly)
-  - **Alembic:** async env.py configured for autogenerate
-  - **Stubs:** all API routes, agents, services, schemas (empty, ready to implement)
+- `backend/` — full FastAPI backend:
+  - **Models:** User, DailyLog, Meal, UserBehaviorPattern, PushNotificationLog, SosSession, AIInteraction
+  - **Core:** config, async DB engine, Firebase Admin, `get_current_user` dependency
+  - **Schemas:** user, macros, meal, sos (all implemented)
+  - **Services:** macro_service (budget calc, Mifflin-St Jeor BMR), notification_service (FCM)
+  - **AI Agent:** macro_engine.py — Claude 3.5 Sonnet via Tool Use, budget guard, totals validation
+  - **System prompt:** agents/prompts/macro_v1.txt (versioned)
+  - **Routes:** POST /meals/generate ✅, POST /meals/log ✅, GET /meals/today ✅, GET /meals/history ✅, GET /macros/today ✅, POST /auth/register ✅, GET/PUT /users/me ✅
+  - **Workers:** push_worker + behavior_analyzer (full implementation)
+  - **Alembic:** async env.py
 
 ## GitHub Remote
 - https://github.com/yarin114/FitBuddy.git (branch: `main`)
 
 ## Architectural Decisions (locked)
 - LLM: Anthropic Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`)
+- LLM structured output: Tool Use (not beta structured-outputs — only supported on Sonnet 4.5+)
 - Deployment: Docker on Render / Railway
 - Push worker: APScheduler inside FastAPI (no Celery/Redis)
 - Flutter state management: Riverpod
 - Phase 1 scope: text cravings + push daemon + SOS WebSocket (no photo scan)
 
+## Key Technical Notes
+- `_calculate_macro_targets` uses Mifflin-St Jeor BMR with 500 kcal deficit
+- Macro split: 30% protein / 40% carbs / 30% fat
+- Budget guard tolerances: ±30 kcal, ±5g macros
+- All LLM prompts versioned in `agents/prompts/`
+
 ---
 
 ## Current Focus
-- Implement API route handlers + Pydantic schemas + service layer
+- SOS / CBT WebSocket module (cbt_agent.py + /ws/sos route)
 
 ---
 
 ## What Comes Next
-1. Pydantic schemas (user, meal, macros, sos)
-2. Service layer: macro_service, notification_service
-3. API routes: `/auth`, `/users`, `/macros`, `/meals`
-4. LLM agents: macro_engine.py + system prompt
-5. SOS WebSocket route + cbt_agent.py
-6. Flutter mobile app scaffold
-7. Docker + deployment config
+1. SOS WebSocket route (`api/v1/sos.py`) + `agents/cbt_agent.py` + `prompts/cbt_v1.txt`
+2. Push agent LLM call (`agents/push_agent.py`)
+3. Alembic first migration + `alembic.ini` config
+4. Dockerfile + docker-compose
+5. Flutter mobile app scaffold
 
 ---
 
