@@ -25,6 +25,17 @@ Before making **any** code change, read [`MEMORY.md`](./MEMORY.md) to understand
 - Do not skip ahead, rewrite completed work, or start a new module before the current focus is resolved.
 - The only exception is if the user explicitly instructs otherwise in the current conversation.
 
+## Rule 4 — Always Give a Change Summary
+
+After every change (code written, file created, config updated), give the user a short, clear summary of:
+- What was changed or created
+- Why (what problem it solves or what feature it enables)
+- What to do next or how to test it (if applicable)
+
+Keep it concise — bullet points preferred over paragraphs.
+
+---
+
 ## Rule 3 — Update MEMORY.md After Every Git Push
 
 After every `git push`, update `MEMORY.md` to reflect:
