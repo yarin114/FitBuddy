@@ -36,7 +36,13 @@ class User(Base):
     goal_weight_kg: Mapped[Optional[float]] = mapped_column(nullable=True)
     activity_level: Mapped[Optional[str]] = mapped_column(
         String(20), nullable=True
-    )  # sedentary | light | moderate | active
+    )  # sedentary | light | moderate | active | very_active
+    goal: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )  # lose_weight | maintain | gain_muscle
+    onboarding_completed: Mapped[bool] = mapped_column(
+        nullable=False, default=False, server_default="false"
+    )
 
     # Daily macro targets — calculated once on onboarding, re-calculated on profile update
     daily_calorie_target: Mapped[Optional[int]] = mapped_column(nullable=True)

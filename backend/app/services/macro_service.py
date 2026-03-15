@@ -1,6 +1,6 @@
 """
 Macro Service
-──────────────
+--------------
 Owns all business logic around daily macro budgets and daily log management.
 No HTTP concerns — pure DB + computation.
 """
@@ -15,11 +15,19 @@ from app.models.daily_log import DailyLog
 from app.models.user import User
 from app.schemas.macros import MacroBudget
 
+# ── Activity multipliers (Mifflin-St Jeor standard) ──────────────────────────
+_ACTIVITY_MULTIPLIERS: dict[str, float] = {
+    "sedentary":   1.2,    # desk job, little/no exercise
+    "light":       1.375,  # light exercise 1–3x/week
+    "moderate":    1.55,   # moderate exercise 3–5x/week
+    "active":      1.725,  # hard exercise 6–7x/week
+    "very_active": 1.9,    # athlete / physical job
+}
+
 
 async def get_or_create_today_log(db: AsyncSession, user: User) -> DailyLog:
     """
     Return today's DailyLog for the user, creating it if it doesn't exist yet.
-    Uses SELECT … FOR UPDATE to be safe under concurrent requests.
     """
     today = date.today()
     result = await db.execute(
@@ -40,7 +48,7 @@ async def get_or_create_today_log(db: AsyncSession, user: User) -> DailyLog:
             fat_consumed_g=0,
         )
         db.add(log)
-        await db.flush()  # assigns the UUID without committing the transaction
+        await db.flush()
 
     return log
 
@@ -48,7 +56,7 @@ async def get_or_create_today_log(db: AsyncSession, user: User) -> DailyLog:
 def compute_budget(user: User, log: DailyLog) -> MacroBudget:
     """
     Derive the remaining macro budget from the user's targets and today's consumption.
-    Targets default to 0 if onboarding is incomplete (prevents negative budgets).
+    Targets default to 0 if onboarding is incomplete.
     """
     cal_target  = user.daily_calorie_target or 0
     prot_target = user.daily_protein_g      or 0
@@ -74,47 +82,66 @@ def compute_budget(user: User, log: DailyLog) -> MacroBudget:
 
 def _calculate_macro_targets(profile) -> dict:
     """
-    Mifflin-St Jeor BMR → TDEE → deficit for weight loss → macro split.
+    Mifflin-St Jeor BMR → TDEE → goal adjustment → macro split.
 
-    ``profile`` can be a UserOnboardRequest or any object with the same fields.
-    Returns a dict of {daily_calorie_target, daily_protein_g, daily_carbs_g, daily_fat_g}.
-    Falls back to sensible defaults if physical data is missing.
+    ``profile`` can be a UserOnboardRequest, UserProfileRequest, or any object
+    with the same fields.  Falls back to sensible defaults for missing values.
+
+    Goal adjustments:
+      lose_weight  → TDEE − 500 kcal  (≈ 0.5 kg/week loss)
+      maintain     → TDEE
+      gain_muscle  → TDEE + 500 kcal  (lean bulk)
+
+    Macro splits:
+      lose_weight  → 35 % protein / 35 % carbs / 30 % fat
+      maintain     → 30 % protein / 40 % carbs / 30 % fat
+      gain_muscle  → 30 % protein / 45 % carbs / 25 % fat
     """
-    weight  = profile.weight_kg   or 75.0
-    height  = profile.height_cm   or 170.0
-    gender  = profile.gender      or "other"
-    activity = profile.activity_level or "sedentary"
+    weight   = getattr(profile, "weight_kg",      None) or 75.0
+    height   = getattr(profile, "height_cm",      None) or 170.0
+    gender   = getattr(profile, "gender",         None) or "other"
+    activity = getattr(profile, "activity_level", None) or "sedentary"
+    goal     = getattr(profile, "goal",           None) or "lose_weight"
 
-    # Age from date_of_birth
+    # ── Age ────────────────────────────────────────────────────────────────
     age = 30
-    if profile.date_of_birth:
-        from datetime import date
-        today = date.today()
-        age = (today - profile.date_of_birth).days // 365
+    dob = getattr(profile, "date_of_birth", None)
+    if dob:
+        age = (date.today() - dob).days // 365
 
-    # Mifflin-St Jeor BMR
+    # ── BMR (Mifflin-St Jeor) ──────────────────────────────────────────────
     if gender == "male":
         bmr = 10 * weight + 6.25 * height - 5 * age + 5
     elif gender == "female":
         bmr = 10 * weight + 6.25 * height - 5 * age - 161
     else:
-        bmr = 10 * weight + 6.25 * height - 5 * age - 78  # average
+        bmr = 10 * weight + 6.25 * height - 5 * age - 78
 
-    activity_multipliers = {
-        "sedentary": 1.2,
-        "light":     1.375,
-        "moderate":  1.55,
-        "active":    1.725,
-    }
-    tdee = bmr * activity_multipliers.get(activity, 1.2)
+    # ── TDEE ───────────────────────────────────────────────────────────────
+    multiplier = _ACTIVITY_MULTIPLIERS.get(activity, 1.2)
+    tdee = bmr * multiplier
 
-    # 500 kcal/day deficit for ~0.5 kg/week loss
-    target_calories = max(1200, int(tdee - 500))
+    # ── Goal adjustment ────────────────────────────────────────────────────
+    if goal == "lose_weight":
+        target_calories = max(1200, int(tdee - 500))
+    elif goal == "gain_muscle":
+        target_calories = int(tdee + 500)
+    else:  # maintain
+        target_calories = int(tdee)
 
-    # Macro split: 30% protein / 40% carbs / 30% fat
-    protein_g = int((target_calories * 0.30) / 4)
-    carbs_g   = int((target_calories * 0.40) / 4)
-    fat_g     = int((target_calories * 0.30) / 9)
+    # ── Macro split ────────────────────────────────────────────────────────
+    if goal == "lose_weight":
+        protein_g = int((target_calories * 0.35) / 4)
+        carbs_g   = int((target_calories * 0.35) / 4)
+        fat_g     = int((target_calories * 0.30) / 9)
+    elif goal == "gain_muscle":
+        protein_g = int((target_calories * 0.30) / 4)
+        carbs_g   = int((target_calories * 0.45) / 4)
+        fat_g     = int((target_calories * 0.25) / 9)
+    else:  # maintain
+        protein_g = int((target_calories * 0.30) / 4)
+        carbs_g   = int((target_calories * 0.40) / 4)
+        fat_g     = int((target_calories * 0.30) / 9)
 
     return {
         "daily_calorie_target": target_calories,
@@ -132,10 +159,7 @@ async def apply_meal_to_log(
     carbs_g: int,
     fat_g: int,
 ) -> None:
-    """
-    Increment the daily log's running totals by the meal's macros
-    and update last_meal_at.  Caller is responsible for committing.
-    """
+    """Increment the daily log's running totals by the meal's macros."""
     log.calories_consumed  += calories
     log.protein_consumed_g += protein_g
     log.carbs_consumed_g   += carbs_g

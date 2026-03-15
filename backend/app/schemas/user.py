@@ -2,13 +2,13 @@ from datetime import date, datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ── Inbound ───────────────────────────────────────────────────────────────────
 
 class UserOnboardRequest(BaseModel):
-    """Sent by the client after Firebase sign-up to create the DB profile."""
+    """Sent by the client after Supabase sign-up to create the DB profile."""
 
     name: str = Field(..., min_length=1, max_length=255)
     email: EmailStr
@@ -18,8 +18,28 @@ class UserOnboardRequest(BaseModel):
     height_cm: Optional[float] = Field(None, gt=0, le=300)
     goal_weight_kg: Optional[float] = Field(None, gt=0, le=500)
     activity_level: Optional[str] = Field(
-        None, pattern="^(sedentary|light|moderate|active)$"
+        None, pattern="^(sedentary|light|moderate|active|very_active)$"
     )
+    goal: Optional[str] = Field(
+        None, pattern="^(lose_weight|maintain|gain_muscle)$"
+    )
+    timezone: str = Field(default="UTC", max_length=64)
+
+
+class UserProfileRequest(BaseModel):
+    """
+    Sent by Flutter on onboarding completion.
+    Stores the user's physical profile and recalculates macro targets.
+    """
+
+    gender: str = Field(..., pattern="^(male|female|other)$")
+    age: int = Field(..., ge=13, le=100)
+    weight_kg: float = Field(..., gt=0, le=500)
+    height_cm: float = Field(..., gt=0, le=300)
+    activity_level: str = Field(
+        ..., pattern="^(sedentary|light|moderate|active|very_active)$"
+    )
+    goal: str = Field(..., pattern="^(lose_weight|maintain|gain_muscle)$")
     timezone: str = Field(default="UTC", max_length=64)
 
 
@@ -28,9 +48,13 @@ class UserUpdateRequest(BaseModel):
 
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     weight_kg: Optional[float] = Field(None, gt=0, le=500)
+    height_cm: Optional[float] = Field(None, gt=0, le=300)
     goal_weight_kg: Optional[float] = Field(None, gt=0, le=500)
     activity_level: Optional[str] = Field(
-        None, pattern="^(sedentary|light|moderate|active)$"
+        None, pattern="^(sedentary|light|moderate|active|very_active)$"
+    )
+    goal: Optional[str] = Field(
+        None, pattern="^(lose_weight|maintain|gain_muscle)$"
     )
     fcm_token: Optional[str] = Field(None, max_length=512)
     timezone: Optional[str] = Field(None, max_length=64)
@@ -56,6 +80,8 @@ class UserResponse(BaseModel):
     height_cm: Optional[float]
     goal_weight_kg: Optional[float]
     activity_level: Optional[str]
+    goal: Optional[str]
+    onboarding_completed: bool
     timezone: str
     macro_targets: MacroTargets
     created_at: datetime
@@ -75,6 +101,8 @@ class UserResponse(BaseModel):
             height_cm=user.height_cm,
             goal_weight_kg=user.goal_weight_kg,
             activity_level=user.activity_level,
+            goal=user.goal,
+            onboarding_completed=user.onboarding_completed,
             timezone=user.timezone,
             macro_targets=MacroTargets(
                 daily_calorie_target=user.daily_calorie_target,

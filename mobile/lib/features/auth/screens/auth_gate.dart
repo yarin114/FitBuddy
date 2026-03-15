@@ -3,37 +3,50 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../dashboard/screens/dashboard_screen.dart';
+import '../../onboarding/screens/onboarding_screen.dart';
 import '../providers/auth_provider.dart';
 import 'auth_screen.dart';
 
-/// Listens to Supabase auth state and routes to the correct screen.
-///
-/// - Authenticated  → [DashboardScreen]
-/// - Unauthenticated → [AuthScreen]
-///
-/// Uses the synchronous [currentSession] for the loading state so there is
-/// no flash of the wrong screen on hot-restart or cold start.
+/// Three-way router:
+///   No session                     → [AuthScreen]
+///   Session + onboarding incomplete → [OnboardingScreen]
+///   Session + onboarding complete   → [DashboardScreen]
 class AuthGate extends ConsumerWidget {
   const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncState     = ref.watch(authStateChangesProvider);
+    final authAsync      = ref.watch(authStateChangesProvider);
     final currentSession = Supabase.instance.client.auth.currentSession;
 
-    return asyncState.when(
-      // Stream has emitted: use the real session from the event.
-      data: (state) => state.session != null
-          ? const DashboardScreen()
-          : const AuthScreen(),
+    // Determine if there is an active session — use synchronous check as
+    // fallback so there is no flicker on cold start.
+    final hasSession = authAsync.valueOrNull?.session != null ||
+        (authAsync.isLoading && currentSession != null);
 
-      // Stream not yet emitted: fall back to the synchronous session check
-      // so the user never sees a spinner if they're already logged in.
-      loading: () => currentSession != null
-          ? const DashboardScreen()
-          : const AuthScreen(),
+    if (!hasSession) {
+      return authAsync.isLoading
+          ? _splash(context)   // brief spinner on very first frame
+          : const AuthScreen();
+    }
 
-      error: (_, __) => const AuthScreen(),
+    // Authenticated — check onboarding completion.
+    final profileAsync = ref.watch(userProfileProvider);
+
+    return profileAsync.when(
+      loading: () => _splash(context),
+      error:   (_, __) => const DashboardScreen(), // fail open
+      data: (profile) {
+        if (profile == null || !profile.onboardingCompleted) {
+          return const OnboardingScreen();
+        }
+        return const DashboardScreen();
+      },
     );
   }
+
+  Widget _splash(BuildContext context) => Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: const Center(child: CircularProgressIndicator()),
+      );
 }
